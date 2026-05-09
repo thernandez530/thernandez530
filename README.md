@@ -8,8 +8,8 @@ import SoftwareDeveloper from 'thernandez530';
 class Bio extends SoftwareDeveloper {
   name     = 'Tomas Hernandez';
   title    = 'Software Engineer';
-  company  = 'Pipoca Digital | Remote';
-  location = 'Fortaleza, CE';
+  company  = 'Enginner Digital | Remote';
+  location = 'Santiago, CL';
 }
 
 class Skills extends SoftwareDeveloper {
