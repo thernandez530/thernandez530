@@ -1,5 +1,5 @@
 <h1 align="center">¡Hola, soy Tomás Hernández! 👋</h1>
-<h3 align="center">Software Developer | Backend Developer</h3>
+<h3 align="center">Software Developer | Full - Stack Developer</h3>
 
 <p align="center">
   <i>Me apasiona construir soluciones mediante código.</i>
@@ -19,7 +19,7 @@
 
 ## 🚀 Sobre mí
 
-- 🔭 Actualmente trabajando como **Desarrollador Backend Freelance**, construyendo APIs REST con Node.js y Express.
+- 🔭 Actualmente trabajando como **Desarrollador Full - Stack Freelance**, construyendo APIs REST con Node.js y Express.
 - 🧠 Experiencia diseñando bases de datos con **MongoDB y Supabase**, e integrando APIs de terceros.
 - 🚀 He participado en proyectos Full Stack, automatización de procesos e integración de APIs.
 - 🏆 Ganador nacional del **Rally Latinoamericano de Innovación** (2025) con el proyecto CARWORKCHILE.
