@@ -3,7 +3,7 @@
   <img src="./assets/contributions.svg" width="860" alt="Calendario real de contribuciones de Tomás Hernández" />
   <h3><code>tomas@github ~ $ whoami</code></h3>
   <table><tr>
-    <td valign="top"><img src="./assets/portrait.svg" width="370" alt="Mi foto de GitHub convertida a un retrato ASCII animado" /></td>
+    <td valign="top"><img src="./assets/portrait.svg" width="370" alt="Mi ilustración convertida a un retrato ASCII animado" /></td>
     <td valign="top"><img src="./assets/stats.svg" width="490" alt="Mis estadísticas reales de contribuciones y actividad por mes" /></td>
   </tr></table>
   <br><br>

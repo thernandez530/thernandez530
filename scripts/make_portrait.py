@@ -1,8 +1,7 @@
-"""Convert the current GitHub avatar to self-typing ASCII SVG + real stats."""
-import argparse, datetime as dt, html, io, json, pathlib, urllib.request
-from PIL import Image, ImageOps, ImageEnhance, ImageFilter
+"""Convert the chosen illustration to self-typing ASCII SVG + real stats."""
+import argparse, html, json, pathlib
+from PIL import Image, ImageOps, ImageEnhance, ImageFilter, ImageDraw
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-AVATAR='https://avatars.githubusercontent.com/u/228604850?v=4'
 
 def panel(width,body,title):
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="440" viewBox="0 0 {width} 440" role="img"><title>{html.escape(title)}</title><style>text{{font-family:Consolas,"Liberation Mono",monospace}}.row{{animation:print 0.6s ease-out both;clip-path:inset(0 0 0 0)}}@keyframes print{{from{{clip-path:inset(0 100% 0 0)}}to{{clip-path:inset(0 0 0 0)}}}}.fade{{animation:fade .7s ease both}}@keyframes fade{{from{{opacity:0}}to{{opacity:1}}}}@media(prefers-reduced-motion:reduce){{.row,.fade{{animation:none}}}}</style><rect x=".5" y=".5" width="{width-1}" height="439" rx="12" fill="#0d1117" stroke="#30363d"/>{body}</svg>'''
@@ -12,10 +11,26 @@ def txt(x,y,value,size=13,color='#c9d1d9'):
 
 def portrait(source):
     image=Image.open(source).convert('RGB')
+    # Isolate the head from the supplied 864×1536 illustration.
     width,height=image.size
-    # Focus the portrait on the face; the source remains the real GitHub avatar.
-    image=image.crop((round(width*.28),0,round(width*.80),round(height*.66)))
-    image=ImageOps.fit(image,(360,390),method=Image.Resampling.LANCZOS,centering=(.5,0))
+    outline=[(402,300),(420,278),(424,254),(464,246),(458,231),
+             (492,235),(522,231),(556,227),(608,244),(659,269),
+             (683,309),(701,321),(693,348),(698,401),(678,456),
+             (661,509),(662,540),(647,582),(609,596),(564,639),
+             (501,681),(438,720),(389,714),(379,685),(380,637),
+             (366,589),(355,551),(352,511),(353,472),(350,443),
+             (351,419),(366,407),(383,359)]
+    mask=Image.new('L',image.size,0)
+    ImageDraw.Draw(mask).polygon(
+        [(round(x*width/864),round(y*height/1536)) for x,y in outline],
+        fill=255)
+    isolated=Image.new('RGB',image.size,'white')
+    isolated.paste(image,(0,0),mask)
+    crop=isolated.crop((round(width*330/864),round(height*215/1536),
+                       round(width*720/864),round(height*735/1536)))
+    crop=ImageOps.contain(crop,(360,390),method=Image.Resampling.LANCZOS)
+    image=Image.new('RGB',(360,390),'white')
+    image.paste(crop,((360-crop.width)//2,(390-crop.height)//2))
     image=ImageOps.autocontrast(ImageOps.grayscale(image),cutoff=.5)
     image=ImageEnhance.Contrast(image).enhance(1.25)
     image=image.filter(ImageFilter.UnsharpMask(radius=1.4,percent=150,threshold=3))
@@ -27,8 +42,8 @@ def portrait(source):
     for row in range(image.height):
         chars=''.join(ramp[round((255-image.getpixel((x,row)))/255*(len(ramp)-1))] for x in range(image.width))
         body+=f'<text class="row" style="animation-delay:{row*.035:.3f}s" x="13" y="{48+row*5.6:.2f}" font-size="5.7" fill="#e6edf3" xml:space="preserve">{html.escape(chars)}</text>'
-    body+=txt(18,426,'Foto original · @thernandez530',10,'#8b949e')
-    (ROOT/'assets/portrait.svg').write_text(panel(370,body,'Retrato ASCII animado de Tomás Hernández, generado desde su avatar real de GitHub'),encoding='utf-8')
+    body+=txt(18,426,'Retrato ilustrado · @thernandez530',10,'#8b949e')
+    (ROOT/'assets/portrait.svg').write_text(panel(370,body,'Retrato ASCII animado de Tomás Hernández, generado desde la ilustración elegida por el usuario'),encoding='utf-8')
 
 def stats():
     data=json.loads((ROOT/'data/contributions.json').read_text())
@@ -63,9 +78,6 @@ def stats():
     (ROOT/'assets/stats.svg').write_text(panel(490,body,'Estadísticas reales y contribuciones mensuales de Tomás Hernández'),encoding='utf-8')
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--avatar-file');args=parser.parse_args()
-    if args.avatar_file: source=args.avatar_file
-    else:
-        request=urllib.request.Request(AVATAR,headers={'User-Agent':'GitHub-profile-art'})
-        with urllib.request.urlopen(request,timeout=30) as response: source=io.BytesIO(response.read())
+    parser=argparse.ArgumentParser();parser.add_argument('--source-file','--avatar-file',dest='source_file');args=parser.parse_args()
+    source=args.source_file or ROOT/'assets/portrait-source.jpg'
     portrait(source);stats()
