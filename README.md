@@ -1,5 +1,11 @@
 <div align="center">
-  <img src="./assets/info-card.svg" width="860" alt="Tomás Hernández Oñate — Desarrollador Full Stack, estudiante de Ingeniería en Informática en UBO, Santiago de Chile" />
+  <h3><code>tomas@github ~ $ ./contributions.sh</code></h3>
+  <img src="./assets/contributions.svg" width="860" alt="Calendario real de contribuciones de Tomás Hernández" />
+  <h3><code>tomas@github ~ $ whoami</code></h3>
+  <table><tr>
+    <td valign="top"><img src="./assets/portrait.svg" width="370" alt="Mi foto de GitHub convertida a un retrato ASCII animado" /></td>
+    <td valign="top"><img src="./assets/stats.svg" width="490" alt="Mis estadísticas reales de contribuciones y actividad por mes" /></td>
+  </tr></table>
   <br><br>
   <a href="https://tomasghernandez.dev">Portafolio</a> ·
   <a href="https://linkedin.com/in/tomasghernandez">LinkedIn</a> ·
@@ -32,10 +38,6 @@ Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiant
 **Datos:** Supabase · MongoDB · MySQL  
 **Cloud y herramientas:** AWS · Docker · Railway · Git · GitHub · Postman · Figma  
 **IA aplicada:** Claude · Codex · APIs de modelos de lenguaje
-
-### Actividad en GitHub
-
-<img src="./assets/contributions.svg" width="860" alt="Calendario de contribuciones reales de thernandez530, actualizado diariamente con GitHub Actions" />
 
 ### Conversemos
 

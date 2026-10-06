@@ -22,6 +22,6 @@ Si Actions está deshabilitado, habilítalo en el repositorio. Si una política 
 - `scripts/generate.py`: generador Python 3.11+, sin dependencias externas.
 - `.github/workflows/update-profile-art.yml`: actualización diaria.
 
-Se usa una composición vertical para conservar legibilidad en pantallas pequeñas. Las animaciones se reproducen una vez; hay soporte de movimiento reducido y títulos accesibles. No se utiliza un retrato ASCII porque no se añadió una fotografía de origen al proyecto.
+El calendario ocupa todo el ancho; debajo se muestran el retrato y las estadísticas en dos columnas, siguiendo la referencia. Las animaciones se reproducen una vez; hay soporte de movimiento reducido y títulos accesibles. El retrato ASCII se genera desde el avatar público de GitHub con `scripts/make_portrait.py` y Pillow. Para regenerarlo localmente, instala Pillow y ejecuta `python scripts/make_portrait.py`; también acepta `--avatar-file RUTA`. Las estadísticas se derivan del mismo calendario real.
 
 Inspiración: [guía de Avi Vashishta](https://www.avivashishta.com/blog/build-animated-github-profile-readme). Implementación adaptada para Tomás, con consulta GraphQL mediante el token incorporado de Actions.
