@@ -1,6 +1,6 @@
 """Convert the current GitHub avatar to self-typing ASCII SVG + real stats."""
 import argparse, datetime as dt, html, io, json, pathlib, urllib.request
-from PIL import Image, ImageOps, ImageEnhance
+from PIL import Image, ImageOps, ImageEnhance, ImageFilter
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 AVATAR='https://avatars.githubusercontent.com/u/228604850?v=4'
 
@@ -12,14 +12,21 @@ def txt(x,y,value,size=13,color='#c9d1d9'):
 
 def portrait(source):
     image=Image.open(source).convert('RGB')
-    image=ImageOps.fit(image,(400,460),method=Image.Resampling.LANCZOS,centering=(.5,.28))
-    image=ImageOps.autocontrast(ImageOps.grayscale(image),cutoff=1)
-    image=ImageEnhance.Contrast(image).enhance(1.15).resize((88,98),Image.Resampling.LANCZOS)
-    ramp=' .,:;irsXA253hMHGS#9B&@'
+    width,height=image.size
+    # Focus the portrait on the face; the source remains the real GitHub avatar.
+    image=image.crop((round(width*.28),0,round(width*.80),round(height*.66)))
+    image=ImageOps.fit(image,(360,390),method=Image.Resampling.LANCZOS,centering=(.5,0))
+    image=ImageOps.autocontrast(ImageOps.grayscale(image),cutoff=.5)
+    image=ImageEnhance.Contrast(image).enhance(1.25)
+    image=image.filter(ImageFilter.UnsharpMask(radius=1.4,percent=150,threshold=3))
+    # Monospace glyphs are ~0.6 times as wide as tall. Match the grid to
+    # those dimensions and keep full line height so characters never overlap.
+    image=image.resize((100,66),Image.Resampling.LANCZOS)
+    ramp=' .:-=+*#%@'
     body=txt(18,25,'tomas@github ~ $ avatar',11,'#8b949e')
     for row in range(image.height):
         chars=''.join(ramp[round((255-image.getpixel((x,row)))/255*(len(ramp)-1))] for x in range(image.width))
-        body+=f'<text class="row" style="animation-delay:{row*.022:.3f}s" x="13" y="{48+row*3.75:.2f}" font-size="6.5" fill="#c9d1d9" xml:space="preserve">{html.escape(chars)}</text>'
+        body+=f'<text class="row" style="animation-delay:{row*.035:.3f}s" x="13" y="{48+row*5.6:.2f}" font-size="5.7" fill="#e6edf3" xml:space="preserve">{html.escape(chars)}</text>'
     body+=txt(18,426,'Foto original · @thernandez530',10,'#8b949e')
     (ROOT/'assets/portrait.svg').write_text(panel(370,body,'Retrato ASCII animado de Tomás Hernández, generado desde su avatar real de GitHub'),encoding='utf-8')
 
