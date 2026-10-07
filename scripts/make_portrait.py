@@ -1,6 +1,7 @@
 """Convert the chosen illustration to self-typing ASCII SVG + real stats."""
 import argparse, html, json, pathlib
 from PIL import Image, ImageOps, ImageEnhance, ImageFilter, ImageDraw
+import math
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 
 def panel(width,body,title):
@@ -31,19 +32,68 @@ def portrait(source):
     crop=ImageOps.contain(crop,(360,390),method=Image.Resampling.LANCZOS)
     image=Image.new('RGB',(360,390),'white')
     image.paste(crop,((360-crop.width)//2,(390-crop.height)//2))
-    image=ImageOps.autocontrast(ImageOps.grayscale(image),cutoff=.5)
-    image=ImageEnhance.Contrast(image).enhance(1.25)
-    image=image.filter(ImageFilter.UnsharpMask(radius=1.4,percent=150,threshold=3))
-    # Monospace glyphs are ~0.6 times as wide as tall. Match the grid to
-    # those dimensions and keep full line height so characters never overlap.
-    image=image.resize((100,66),Image.Resampling.LANCZOS)
-    ramp=' .:-=+*#%@'
-    body=txt(18,25,'tomas@github ~ $ avatar',11,'#8b949e')
-    for row in range(image.height):
-        chars=''.join(ramp[round((255-image.getpixel((x,row)))/255*(len(ramp)-1))] for x in range(image.width))
-        body+=f'<text class="row" style="animation-delay:{row*.035:.3f}s" x="13" y="{48+row*5.6:.2f}" font-size="5.7" fill="#e6edf3" xml:space="preserve">{html.escape(chars)}</text>'
-    body+=txt(18,426,'Retrato ilustrado · @thernandez530',10,'#8b949e')
-    (ROOT/'assets/portrait.svg').write_text(panel(370,body,'Retrato ASCII animado de Tomás Hernández, generado desde la ilustración elegida por el usuario'),encoding='utf-8')
+    gray=ImageOps.grayscale(image)
+    pixels=list(gray.tobytes());subject=[value<250 for value in pixels]
+    width_px,height_px=gray.size
+    # Same bilateral kernel, implemented with Pillow and Python's standard
+    # library so the existing workflow needs no new dependency or permission.
+    range_weight=[math.exp(-difference*difference/(2*35**2)) for difference in range(256)]
+    kernel=[(dx,dy,math.exp(-(dx*dx+dy*dy)/8))
+            for dy in range(-2,3) for dx in range(-2,3)]
+    smooth=pixels
+    for _ in range(3):
+        filtered=[]
+        for y in range(height_px):
+            for x in range(width_px):
+                center=smooth[y*width_px+x]
+                if not subject[y*width_px+x]:
+                    filtered.append(255);continue
+                numerator=denominator=0.0
+                for dx,dy,spatial in kernel:
+                    xx=min(width_px-1,max(0,x+dx));yy=min(height_px-1,max(0,y+dy))
+                    neighbor=smooth[yy*width_px+xx]
+                    weight=spatial*range_weight[abs(neighbor-center)]
+                    numerator+=weight*neighbor;denominator+=weight
+                filtered.append(round(numerator/denominator))
+        smooth=filtered
+    values=sorted(value for value,inside in zip(smooth,subject) if inside)
+    if not values: raise ValueError('No portrait subject found in the selected source')
+    lo=values[round((len(values)-1)*.02)];hi=values[round((len(values)-1)*.90)]
+    smoothed=Image.new('L',gray.size);smoothed.putdata(smooth)
+    fine=list(smoothed.filter(ImageFilter.GaussianBlur(1.5)).tobytes())
+    coarse=list(smoothed.filter(ImageFilter.GaussianBlur(6)).tobytes())
+    tones=[]
+    for value,f,c,inside in zip(smooth,fine,coarse,subject):
+        tone=min(1,max(0,(value-lo)/max(hi-lo,1)))
+        ridge=min(1,max(0,(c-f)/40))
+        tones.append(round(max(0,min(1,tone-.6*ridge))*255) if inside else 255)
+    image=Image.new('L',gray.size);image.putdata(tones)
+    image=image.resize((180,104),Image.Resampling.LANCZOS)
+    ramp=" .`:-=+*cs#%@"
+    width,height=740,880
+    body='<defs>'
+    cols,rows=image.size;cell_w=684/cols;cell_h=750/rows
+    duration=5.8/rows
+    for row in range(rows):
+        body+=f'<clipPath id="line-{row}"><rect x="28" y="{74+row*cell_h:.3f}" width="0" height="{cell_h:.3f}"><animate attributeName="width" from="0" to="684" begin="{row*duration:.3f}s" dur="{duration:.3f}s" fill="freeze"/></rect></clipPath>'
+    body+='</defs><style>.portrait-row{clip-path:var(--row-clip)}@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}.typing-cursor{display:none}}</style>'
+    body+='<rect x=".5" y=".5" width="739" height="879" rx="20" fill="#0d1117" stroke="#30363d"/>'
+    body+='<line x1="0" y1="52" x2="740" y2="52" stroke="#30363d"/>'
+    for i,color in enumerate(['#ff5f57','#febc2e','#28c840']):
+        body+=f'<circle cx="{28+i*26}" cy="26" r="7" fill="{color}"/>'
+    body+=txt(130,34,'tomas@github ~ $ ./portrait.sh',19,'#8b949e')
+    for row in range(rows):
+        chars=[]
+        for x in range(cols):
+            lum=(image.getpixel((x,row))/255)**1.0
+            chars.append(' ' if lum>=.83 else ramp[round((1-lum)*(len(ramp)-1))])
+        y=74+row*cell_h;delay=row*duration
+        body+=f'<g class="portrait-row" style="--row-clip:url(#line-{row})"><text xml:space="preserve" x="28" y="{y+cell_h*.78:.3f}" fill="#c9d1d9" font-size="{cell_h*.86:.3f}" textLength="684" lengthAdjust="spacing">{html.escape("".join(chars))}</text></g>'
+        body+=f'<rect class="typing-cursor" y="{y:.3f}" width="{cell_w:.3f}" height="{cell_h:.3f}" fill="#c9d1d9" opacity="0"><animate attributeName="x" from="28" to="712" begin="{delay:.3f}s" dur="{duration:.3f}s" fill="freeze"/><set attributeName="opacity" to=".8" begin="{delay:.3f}s"/><set attributeName="opacity" to="0" begin="{delay+duration:.3f}s"/></rect>'
+    body+='<line x1="0" y1="836" x2="740" y2="836" stroke="#30363d"/>'
+    body+=txt(28,865,'tomas@github ~ $ whoami  Tomás Hernández',18,'#8b949e')
+    svg=f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img"><title>Retrato ASCII animado de Tomás Hernández</title><style>text{{font-family:Consolas,"Liberation Mono",monospace}}</style>{body}</svg>'
+    (ROOT/'assets/portrait.svg').write_text(svg,encoding='utf-8')
 
 def stats():
     data=json.loads((ROOT/'data/contributions.json').read_text())
