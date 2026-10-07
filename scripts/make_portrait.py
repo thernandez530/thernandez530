@@ -75,7 +75,7 @@ def portrait(source):
     cols,rows=image.size;cell_w=684/cols;cell_h=750/rows
     duration=5.8/rows
     for row in range(rows):
-        body+=f'<clipPath id="line-{row}"><rect x="28" y="{74+row*cell_h:.3f}" width="0" height="{cell_h:.3f}"><animate attributeName="width" from="0" to="684" begin="{row*duration:.3f}s" dur="{duration:.3f}s" fill="freeze"/></rect></clipPath>'
+        body+=f'<clipPath id="line-{row}"><rect x="28" y="{74+row*cell_h:.3f}" width="0" height="{cell_h:.3f}"><animate attributeName="width" values="0;684;684;0" keyTimes="0;0.0024;0.999;1" begin="{row*duration:.3f}s" dur="24s" repeatCount="indefinite"/></rect></clipPath>'
     body+='</defs><style>.portrait-row{clip-path:var(--row-clip)}@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}.typing-cursor{display:none}}</style>'
     body+='<rect x=".5" y=".5" width="739" height="879" rx="20" fill="#0d1117" stroke="#30363d"/>'
     body+='<line x1="0" y1="52" x2="740" y2="52" stroke="#30363d"/>'
@@ -123,13 +123,13 @@ def stats():
     for i,(month,value) in enumerate(monthly):
         x=538+i*25;height=round(value/maximum*105)
         bar_color=["#a78bfa","#67e8f9"][i%2]
-        body+=f'<rect class="boot" style="animation-delay:{i*.07:.2f}s" x="{x}" y="{195-height}" width="17" height="{max(height,1)}" rx="2" fill="{bar_color}"><title>{month}: {value} contribuciones</title></rect>'
+        body+=f'<rect class="grow-y" style="animation-delay:{i*.07:.2f}s" x="{x}" y="{195-height}" width="17" height="{max(height,1)}" rx="2" fill="{bar_color}"><title>{month}: {value} contribuciones</title></rect>'
         body+=txt(x-1,214,names[int(month[5:])-1],8,'#94a3b8')
     body+=txt(24,248,'Datos reales de GitHub · actualizado '+data['updated'][:10]+' UTC',10,'#94a3b8')
     (ROOT/'assets/stats.svg').write_text(terminal(body,265,'Estadísticas reales de GitHub: contribuciones, rachas y actividad mensual'),encoding='utf-8')
 
 def terminal(body,height,label,width=860):
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img"><title>{html.escape(label)}</title><defs><linearGradient id="surface" x2="1" y2="1"><stop stop-color="#080d23"/><stop offset="1" stop-color="#141d42"/></linearGradient></defs><style>text{{font-family:Consolas,"Liberation Mono",monospace}}.boot{{animation:boot .7s ease both}}@keyframes boot{{from{{opacity:0;transform:translateY(4px)}}to{{opacity:1;transform:translateY(0)}}}}@media(prefers-reduced-motion:reduce){{.boot{{animation:none}}}}</style><rect x="1" y="1" width="{width-2}" height="{height-2}" rx="12" fill="url(#surface)" stroke="#67e8f9" stroke-opacity=".65"/>{body}</svg>'''
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img"><title>{html.escape(label)}</title><defs><linearGradient id="surface" x2="1" y2="1"><stop stop-color="#080d23"/><stop offset="1" stop-color="#141d42"/></linearGradient></defs><style>text{{font-family:Consolas,"Liberation Mono",monospace}}text{{animation:readout 16s ease infinite}}.boot{{animation:boot 16s ease infinite}}.grow-y{{transform-box:fill-box;transform-origin:center bottom;animation:grow-y 16s ease infinite}}.grow-x{{transform-box:fill-box;transform-origin:left center;animation:grow-x 16s ease infinite}}.ring{{animation:ring 16s ease infinite}}.pulse{{animation:pulse 4s ease-in-out infinite}}@keyframes readout{{0%{{opacity:.25}}8%,100%{{opacity:1}}}}@keyframes boot{{0%{{opacity:.2;transform:translateY(4px)}}10%,100%{{opacity:1;transform:translateY(0)}}}}@keyframes grow-y{{0%{{transform:scaleY(.02)}}14%,100%{{transform:scaleY(1)}}}}@keyframes grow-x{{0%{{transform:scaleX(.01)}}14%,100%{{transform:scaleX(1)}}}}@keyframes ring{{0%{{stroke-dashoffset:321}}15%,100%{{stroke-dashoffset:0}}}}@keyframes pulse{{0%,100%{{opacity:.5}}50%{{opacity:1}}}}@media(prefers-reduced-motion:reduce){{text,.boot,.grow-y,.grow-x,.ring,.pulse{{animation:none}}}}</style><rect x="1" y="1" width="{width-2}" height="{height-2}" rx="12" fill="url(#surface)" stroke="#67e8f9" stroke-opacity=".65"/>{body}</svg>'''
 
 def system_profile():
     raw=(ROOT/'assets/portrait.svg').read_text()
@@ -141,6 +141,7 @@ def system_profile():
     for i,c in enumerate(['#fb7185','#fde047','#34d399']):
         body+=f'<circle cx="{22+i*17}" cy="22" r="4" fill="{c}"/>'
     body+=txt(93,27,'thernandez530.connect()',12,'#94a3b8')+txt(692,27,'● SYSTEM ONLINE',11,'#67e8f9')
+    body+='<circle class="pulse" cx="678" cy="23" r="3" fill="#67e8f9"/>'
     body+=txt(26,62,'VISUAL.MAP',10,'#94a3b8')+raw
     body+='<line x1="347" y1="65" x2="347" y2="429" stroke="#29445f"/>'
     body+=txt(373,71,'SYSTEM.INFO',12,'#67e8f9')+txt(373,107,'Tomás Hernández Oñate',26,'#f1f5f9')
@@ -158,12 +159,12 @@ def project_cards():
     projects=[('portfolio','01','Portafolio personal','Presentación de proyectos y experiencia.','Diseño web y desarrollo de aplicaciones.',['Next.js','TypeScript','Tailwind CSS']),('psiconectados','02','Psiconectados','Agenda, consentimientos digitales y pagos.','Plataforma de atención psicológica.',['Full Stack','Supabase','Mercado Pago'])]
     for slug,number,name,line1,line2,tags in projects:
         body=txt(22,27,'PROJECTS.LIST / '+number,10,'#67e8f9')
-        body+=txt(22,65,name,22,'#f1f5f9')+txt(22,95,line1,12,'#cbd5e1')+txt(22,116,line2,12,'#94a3b8')
+        body+='<g class="boot" style="animation-delay:.15s">'+txt(22,65,name,22,'#f1f5f9')+txt(22,95,line1,12,'#cbd5e1')+txt(22,116,line2,12,'#94a3b8')+'</g>'
         x=22
-        for tag in tags:
+        for index,tag in enumerate(tags):
             w=len(tag)*6.5+18
-            body+=f'<rect x="{x}" y="140" width="{w}" height="24" rx="12" fill="#6d28d9" fill-opacity=".55" stroke="#a78bfa" stroke-opacity=".35"/>'+txt(x+9,156,tag,10,'#e9d5ff');x+=w+8
-        body+='<circle cx="381" cy="49" r="10" fill="none" stroke="#67e8f9" stroke-width="2"/>'
+            body+=f'<g class="boot" style="animation-delay:{.3+index*.15:.2f}s"><rect x="{x}" y="140" width="{w}" height="24" rx="12" fill="#6d28d9" fill-opacity=".55" stroke="#a78bfa" stroke-opacity=".35"/>'+txt(x+9,156,tag,10,'#e9d5ff')+'</g>';x+=w+8
+        body+='<circle class="ring" stroke-dasharray="50 13" cx="381" cy="49" r="10" fill="none" stroke="#67e8f9" stroke-width="2"/>'
         body+=txt(22,195,'↗ ABRIR PROYECTO',11,'#67e8f9')
         (ROOT/f'assets/project-{slug}.svg').write_text(terminal(body,216,name+' — '+line1,width=420),encoding='utf-8')
 
@@ -181,7 +182,7 @@ def extra_sections():
         current+=1;end-=1
     body=txt(26,30,'STREAK.MONITOR',12,'#67e8f9')
     for x,value,label,color in [(154,calendar['totalContributions'],'Contribuciones / 12 meses','#a78bfa'),(430,current,'Racha actual / días','#67e8f9'),(706,longest,'Mejor racha / días','#a78bfa')]:
-        body+=f'<circle cx="{x}" cy="109" r="51" fill="none" stroke="#243352" stroke-width="7"/><circle cx="{x}" cy="109" r="51" fill="none" stroke="{color}" stroke-width="7" stroke-dasharray="280 41" transform="rotate(-90 {x} 109)"/>'
+        body+=f'<circle cx="{x}" cy="109" r="51" fill="none" stroke="#243352" stroke-width="7"/><circle cx="{x}" cy="109" r="51" fill="none" class="ring" style="animation-delay:{(x-154)/276*.15:.2f}s" stroke="{color}" stroke-width="7" stroke-dasharray="280 41" transform="rotate(-90 {x} 109)"/>'
         body+=f'<text x="{x}" y="119" text-anchor="middle" fill="#f1f5f9" font-size="32">{value}</text><text x="{x}" y="187" text-anchor="middle" fill="#94a3b8" font-size="12">{label}</text>'
     (ROOT/'assets/streaks.svg').write_text(terminal(body,213,'Contribuciones y rachas reales de GitHub'),encoding='utf-8')
     path=ROOT/'data/profile-metrics.json'
@@ -191,7 +192,7 @@ def extra_sections():
     rows=[('Estrellas / repos públicos','stars'),('Commits / últimos 12 meses','commits'),('Pull requests / 12 meses','prs'),('Issues / últimos 12 meses','issues'),('Repos con commits / 12 meses','contributed'),('Repositorios públicos propios','repositories')]
     for i,(label,key) in enumerate(rows):
         y=72+i*35
-        body+=txt(26,y,label,12,'#cbd5e1')+txt(367,y,metrics.get(key,'—'),16,'#d8b4fe')
+        body+=f'<g class="boot" style="animation-delay:{i*.12:.2f}s">'+txt(26,y,label,12,'#cbd5e1')+txt(367,y,metrics.get(key,'—'),16,'#d8b4fe')+'</g>'
     languages=sorted(metrics.get('languages',{}).items(),key=lambda pair:pair[1]['bytes'],reverse=True)
     total=sum(d['bytes'] for _,d in languages)
     if total:
@@ -200,14 +201,19 @@ def extra_sections():
         for i,(name,data) in enumerate(top):
             y=70+i*34;percent=data['bytes']/total*100;color=html.escape(data['color'],quote=True)
             body+=txt(449,y,name,12,'#cbd5e1')+txt(760,y,f'{percent:.1f}%',11,'#d8b4fe')
-            body+=f'<rect x="449" y="{y+8}" width="355" height="7" rx="3" fill="#243352"/><rect class="boot" style="animation-delay:{i*.12}s" x="449" y="{y+8}" width="{355*percent/100:.2f}" height="7" rx="3" fill="{color}"/>'
+            body+=f'<rect x="449" y="{y+8}" width="355" height="7" rx="3" fill="#243352"/><rect class="grow-x" style="animation-delay:{i*.12}s" x="449" y="{y+8}" width="{355*percent/100:.2f}" height="7" rx="3" fill="{color}"/>'
     else:
         body+=txt(449,90,'Sincronizando datos de GitHub…',12,'#94a3b8')
     body+=txt(449,293,'Bytes de código público · excluye este perfil',10,'#94a3b8')
     body+=txt(26,318,'GitHub API / '+metrics.get('updated',calendar['updated'])[:10]+' UTC',10,'#94a3b8')
     (ROOT/'assets/github-overview.svg').write_text(terminal(body,337,'Estadísticas de GitHub y distribución de lenguajes en repositorios públicos'),encoding='utf-8')
 
+def section_headers():
+    for slug,label in [('about','ABOUT.ME / Sobre mí'),('projects','PROJECTS.LIST'),('stack','TECH.STACK'),('contact','CONNECT / Conversemos')]:
+        body=txt(24,34,label,16,'#67e8f9')+'<rect class="pulse" x="824" y="19" width="10" height="18" rx="2" fill="#a78bfa"/>'
+        (ROOT/f'assets/section-{slug}.svg').write_text(terminal(body,54,label),encoding='utf-8')
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--source-file','--avatar-file',dest='source_file');args=parser.parse_args()
     source=args.source_file or ROOT/'assets/portrait-source.jpg'
-    portrait(source);stats();system_profile();project_cards();extra_sections()
+    portrait(source);stats();system_profile();project_cards();extra_sections();section_headers()

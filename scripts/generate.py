@@ -4,7 +4,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 USER = 'thernandez530'
 
 def svg(body, height, label):
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="860" height="{height}" viewBox="0 0 860 {height}" role="img" aria-label="{html.escape(label)}"><title>{html.escape(label)}</title><style>text{{font-family:ui-monospace,Consolas,monospace}}.reveal{{animation:reveal .6s ease both}}@keyframes reveal{{from{{opacity:0;transform:translateY(5px)}}to{{opacity:1;transform:translateY(0)}}}}@media(prefers-reduced-motion:reduce){{.reveal{{animation:none}}}}</style><rect width="860" height="{height}" rx="16" fill="#080d23"/><rect x=".5" y=".5" width="859" height="{height-1}" rx="16" fill="none" stroke="#29445f"/>{body}</svg>'''
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="860" height="{height}" viewBox="0 0 860 {height}" role="img" aria-label="{html.escape(label)}"><title>{html.escape(label)}</title><style>text{{font-family:ui-monospace,Consolas,monospace}}.reveal{{animation:reveal 16s ease infinite}}@keyframes reveal{{0%{{opacity:.18;transform:translateY(3px)}}10%,100%{{opacity:1;transform:translateY(0)}}}}@media(prefers-reduced-motion:reduce){{.reveal{{animation:none}}}}</style><rect width="860" height="{height}" rx="16" fill="#080d23"/><rect x=".5" y=".5" width="859" height="{height-1}" rx="16" fill="none" stroke="#29445f"/>{body}</svg>'''
 
 def text(x,y,value,color='#c9d1d9',size=16,delay=0):
     return f'<text class="reveal" style="animation-delay:{delay}s" x="{x}" y="{y}" fill="{color}" font-size="{size}">{html.escape(value)}</text>'

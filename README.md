@@ -15,7 +15,7 @@
   <a href="mailto:devstomash@gmail.com">Contacto</a>
 </div>
 
-### Sobre mí
+<img src="./assets/section-about.svg" width="860" alt="About" />
 
 Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiante de **Ingeniería en Informática en la Universidad Bernardo O’Higgins**, en Santiago, Chile. Construyo aplicaciones web, APIs e integraciones que resuelven necesidades reales.
 
@@ -26,7 +26,7 @@ Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiant
 - **Formación adicional:** AWS Academy Graduate — Generative AI Foundations (2026).
 - **Idiomas:** español nativo e inglés intermedio para documentación técnica.
 
-### `tomas@github ~ $ projects --list`
+<img src="./assets/section-projects.svg" width="860" alt="Projects" />
 
 <table>
   <tr>
@@ -37,7 +37,7 @@ Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiant
 
 [Explorar mis repositorios públicos →](https://github.com/thernandez530?tab=repositories)
 
-### Stack
+<img src="./assets/section-stack.svg" width="860" alt="Stack" />
 
 **Frontend**
 
@@ -96,7 +96,7 @@ Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiant
 
 <sub>Iconos: <a href="https://github.com/devicons/devicon">Devicon</a> y <a href="https://github.com/simple-icons/simple-icons">Simple Icons</a>.</sub>
 
-### Conversemos
+<img src="./assets/section-contact.svg" width="860" alt="Contact" />
 
 Me interesan oportunidades de desarrollo de software, proyectos freelance e integraciones de automatización e IA.
 
