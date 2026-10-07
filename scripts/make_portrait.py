@@ -122,7 +122,8 @@ def stats():
     names=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
     for i,(month,value) in enumerate(monthly):
         x=538+i*25;height=round(value/maximum*105)
-        body+=f'<rect class="boot" style="animation-delay:{i*.07:.2f}s" x="{x}" y="{195-height}" width="17" height="{max(height,1)}" rx="2" fill="{['#a78bfa','#67e8f9'][i%2]}"><title>{month}: {value} contribuciones</title></rect>'
+        bar_color=["#a78bfa","#67e8f9"][i%2]
+        body+=f'<rect class="boot" style="animation-delay:{i*.07:.2f}s" x="{x}" y="{195-height}" width="17" height="{max(height,1)}" rx="2" fill="{bar_color}"><title>{month}: {value} contribuciones</title></rect>'
         body+=txt(x-1,214,names[int(month[5:])-1],8,'#94a3b8')
     body+=txt(24,248,'Datos reales de GitHub · actualizado '+data['updated'][:10]+' UTC',10,'#94a3b8')
     (ROOT/'assets/stats.svg').write_text(terminal(body,265,'Estadísticas reales de GitHub: contribuciones, rachas y actividad mensual'),encoding='utf-8')
