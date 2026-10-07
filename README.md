@@ -1,13 +1,12 @@
 <div align="center">
-  <h3><code>tomas@github ~ $ ./contributions.sh</code></h3>
-  <img src="./assets/contributions.svg" width="860" alt="Calendario real de contribuciones de Tomás Hernández" />
-  <h3><code>tomas@github ~ $ whoami</code></h3>
-  <table><tr>
-    <td valign="top"><img src="./assets/portrait.svg" width="370" alt="Mi ilustración convertida a un retrato ASCII animado" /></td>
-    <td valign="top"><img src="./assets/stats.svg" width="490" alt="Mis estadísticas reales de contribuciones y actividad por mes" /></td>
-  </tr></table>
+  <h3><code>tomas@github ~ $ ./profile.sh</code></h3>
+  <img src="./assets/system-profile.svg" width="860" alt="Terminal de Tomás Hernández: retrato ASCII animado e información profesional" />
   <br><br>
-  <a href="https://tomasghernandez.dev">Portafolio</a> ·
+  <img src="./assets/stats.svg" width="860" alt="Estadísticas reales de GitHub y contribuciones mensuales" />
+  <br><br>
+  <img src="./assets/contributions.svg" width="860" alt="Calendario animado de contribuciones de thernandez530" />
+  <br><br>
+  <a href="https://tomasghernandez.dev">↗ Portafolio</a> ·
   <a href="https://linkedin.com/in/tomasghernandez">LinkedIn</a> ·
   <a href="mailto:devstomash@gmail.com">Contacto</a>
 </div>
@@ -23,13 +22,16 @@ Soy **Tomás Hernández Oñate**, desarrollador Full Stack freelance y estudiant
 - **Formación adicional:** AWS Academy Graduate — Generative AI Foundations (2026).
 - **Idiomas:** español nativo e inglés intermedio para documentación técnica.
 
-### Proyectos y experiencia
+### `tomas@github ~ $ projects --list`
 
-| Proyecto | Mi trabajo | Ver más |
-| --- | --- | --- |
-| Portafolio personal | Presentación de proyectos, experiencia y stack tecnológico. | [Sitio web](https://tomasghernandez.dev) |
-| Psiconectados | Desarrollo e integración de agendamiento, consentimientos digitales y pagos para una plataforma de atención psicológica. | [Sitio web](https://psicologarenataalonzo.cl) |
-| Automatización y APIs | Scripts, integración de servicios y flujos para reducir tareas repetitivas. | [Repositorios públicos](https://github.com/thernandez530?tab=repositories) |
+<table>
+  <tr>
+    <td><a href="https://tomasghernandez.dev"><img src="./assets/project-portfolio.svg" width="420" alt="Portafolio personal — abrir sitio web" /></a></td>
+    <td><a href="https://psicologarenataalonzo.cl"><img src="./assets/project-psiconectados.svg" width="420" alt="Psiconectados — agenda, consentimientos y pagos" /></a></td>
+  </tr>
+</table>
+
+[Explorar mis repositorios públicos →](https://github.com/thernandez530?tab=repositories)
 
 ### Stack
 

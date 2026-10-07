@@ -110,24 +110,63 @@ def stats():
         current+=1;end-=1
     active=sum(d['contributionCount']>0 for d in days)
     best=max(d['contributionCount'] for d in days)
-    body=txt(20,27,'tomas@github ~ $ stats',12,'#8b949e')
-    body+=txt(20,59,'Tomás Hernández',22,'#f0f6fc')+txt(20,82,'Full Stack · Santiago, Chile',13,'#3fb950')
-    for i,(label,value) in enumerate([('Racha actual',f'{current} día' if current==1 else f'{current} días'),('Racha más larga',f'{longest} día' if longest==1 else f'{longest} días'),('Contribuciones',data['totalContributions']),('Días activos',active),('Mejor día',best),('Promedio / día',round(data['totalContributions']/len(days),1))]):
-        x=20+(i%2)*230;y=115+(i//2)*62
-        body+=txt(x,y,label,11,'#8b949e')+txt(x,y+26,value,23,'#3fb950' if i==0 else '#f0f6fc')
+    body=txt(24,29,'ACTIVITY.MONITOR / últimos 12 meses',12,'#67e8f9')
+    for i,(label,value) in enumerate([('Contribuciones',data['totalContributions']),('Racha actual',current),('Racha más larga',longest),('Días activos',active),('Mejor día',best),('Promedio diario',round(data['totalContributions']/len(days),1))]):
+        x=24+(i%3)*166;y=72+(i//3)*79
+        body+=txt(x,y,label,11,'#94a3b8')+txt(x,y+37,value,30,'#d8b4fe' if i==0 else '#f1f5f9')
+    body+='<line x1="514" y1="53" x2="514" y2="222" stroke="#29445f"/>'
     monthly={}
     for d in days: monthly[d['date'][:7]]=monthly.get(d['date'][:7],0)+d['contributionCount']
-    monthly=list(monthly.items())[-12:]; maximum=max(v for _,v in monthly) or 1
-    body+=txt(20,310,'Contribuciones por mes · últimos 12 meses',11,'#8b949e')
+    monthly=list(monthly.items())[-12:];maximum=max(v for _,v in monthly) or 1
+    body+=txt(538,65,'CONTRIBUTIONS / MONTH',11,'#67e8f9')
     names=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
     for i,(month,value) in enumerate(monthly):
-        x=20+i*38; height=round(value/maximum*70)
-        body+=f'<rect class="fade" style="animation-delay:{i*.05}s" x="{x}" y="{390-height}" width="25" height="{max(height,1)}" rx="2" fill="#3fb950"><title>{month}: {value} contribuciones</title></rect>'
-        body+=txt(x,407,names[int(month[5:])-1],9,'#8b949e')
-    body+=txt(20,429,'Datos reales · '+data['updated'][:10]+' UTC',10,'#8b949e')
-    (ROOT/'assets/stats.svg').write_text(panel(490,body,'Estadísticas reales y contribuciones mensuales de Tomás Hernández'),encoding='utf-8')
+        x=538+i*25;height=round(value/maximum*105)
+        body+=f'<rect class="boot" style="animation-delay:{i*.07:.2f}s" x="{x}" y="{195-height}" width="17" height="{max(height,1)}" rx="2" fill="{['#a78bfa','#67e8f9'][i%2]}"><title>{month}: {value} contribuciones</title></rect>'
+        body+=txt(x-1,214,names[int(month[5:])-1],8,'#94a3b8')
+    body+=txt(24,248,'Datos reales de GitHub · actualizado '+data['updated'][:10]+' UTC',10,'#94a3b8')
+    (ROOT/'assets/stats.svg').write_text(terminal(body,265,'Estadísticas reales de GitHub: contribuciones, rachas y actividad mensual'),encoding='utf-8')
+
+def terminal(body,height,label,width=860):
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img"><title>{html.escape(label)}</title><defs><linearGradient id="surface" x2="1" y2="1"><stop stop-color="#080d23"/><stop offset="1" stop-color="#141d42"/></linearGradient></defs><style>text{{font-family:Consolas,"Liberation Mono",monospace}}.boot{{animation:boot .7s ease both}}@keyframes boot{{from{{opacity:0;transform:translateY(4px)}}to{{opacity:1;transform:translateY(0)}}}}@media(prefers-reduced-motion:reduce){{.boot{{animation:none}}}}</style><rect x="1" y="1" width="{width-2}" height="{height-2}" rx="12" fill="url(#surface)" stroke="#67e8f9" stroke-opacity=".65"/>{body}</svg>'''
+
+def system_profile():
+    raw=(ROOT/'assets/portrait.svg').read_text()
+    # Nested self-contained SVG: no external image requests, JS or fonts.
+    raw=raw.replace('width="740" height="880"','x="25" y="72" width="300" height="357"',1)
+    raw=raw.replace('#0d1117','#0a1029').replace('#30363d','#284d70')
+    raw=raw.replace('#c9d1d9','#d8b4fe')
+    body='<line x1="1" y1="42" x2="859" y2="42" stroke="#29445f"/>'
+    for i,c in enumerate(['#fb7185','#fde047','#34d399']):
+        body+=f'<circle cx="{22+i*17}" cy="22" r="4" fill="{c}"/>'
+    body+=txt(93,27,'thernandez530.connect()',12,'#94a3b8')+txt(692,27,'● SYSTEM ONLINE',11,'#67e8f9')
+    body+=txt(26,62,'VISUAL.MAP',10,'#94a3b8')+raw
+    body+='<line x1="347" y1="65" x2="347" y2="429" stroke="#29445f"/>'
+    body+=txt(373,71,'SYSTEM.INFO',12,'#67e8f9')+txt(373,107,'Tomás Hernández Oñate',26,'#f1f5f9')
+    body+='<rect x="373" y="123" width="169" height="23" rx="4" fill="#7c3aed"/>'
+    body+=txt(386,139,'FULL STACK DEVELOPER',11,'#f5f3ff')
+    fields=[('Origin','Santiago, Chile'),('Education','Ing. Informática / UBO'),('Status','Freelance / abierto a oportunidades'),('Core.Frontend','React · Next.js · TypeScript'),('Core.Backend','Node.js · Express · APIs REST'),('Core.Database','Supabase · MongoDB · MySQL'),('Core.Infrastructure','AWS · Docker · Git · GitHub'),('AI.Toolchain','Claude · Codex · APIs de IA'),('Grid.Portfolio','tomasghernandez.dev'),('Grid.Contact','devstomash@gmail.com')]
+    for i,(key,value) in enumerate(fields):
+        y=172+i*24
+        body+=f'<g class="boot" style="animation-delay:{.2+i*.1:.2f}s">'+txt(373,y,key,11,'#67e8f9')+txt(535,y,value,12,'#dbeafe')+'</g>'
+    body+='<line x1="1" y1="447" x2="859" y2="447" stroke="#29445f"/>'
+    body+=txt(26,469,'$ construir / integrar / automatizar',11,'#a5b4fc')+txt(642,469,'PROFILE.READY [✓]',11,'#67e8f9')
+    (ROOT/'assets/system-profile.svg').write_text(terminal(body,486,'Perfil terminal de Tomás Hernández: retrato ASCII, formación, stack y contactos'),encoding='utf-8')
+
+def project_cards():
+    projects=[('portfolio','01','Portafolio personal','Presentación de proyectos y experiencia.','Diseño web y desarrollo de aplicaciones.',['Next.js','TypeScript','Tailwind CSS']),('psiconectados','02','Psiconectados','Agenda, consentimientos digitales y pagos.','Plataforma de atención psicológica.',['Full Stack','Supabase','Mercado Pago'])]
+    for slug,number,name,line1,line2,tags in projects:
+        body=txt(22,27,'PROJECTS.LIST / '+number,10,'#67e8f9')
+        body+=txt(22,65,name,22,'#f1f5f9')+txt(22,95,line1,12,'#cbd5e1')+txt(22,116,line2,12,'#94a3b8')
+        x=22
+        for tag in tags:
+            w=len(tag)*6.5+18
+            body+=f'<rect x="{x}" y="140" width="{w}" height="24" rx="12" fill="#6d28d9" fill-opacity=".55" stroke="#a78bfa" stroke-opacity=".35"/>'+txt(x+9,156,tag,10,'#e9d5ff');x+=w+8
+        body+='<circle cx="381" cy="49" r="10" fill="none" stroke="#67e8f9" stroke-width="2"/>'
+        body+=txt(22,195,'↗ ABRIR PROYECTO',11,'#67e8f9')
+        (ROOT/f'assets/project-{slug}.svg').write_text(terminal(body,216,name+' — '+line1,width=420),encoding='utf-8')
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--source-file','--avatar-file',dest='source_file');args=parser.parse_args()
     source=args.source_file or ROOT/'assets/portrait-source.jpg'
-    portrait(source);stats()
+    portrait(source);stats();system_profile();project_cards()
