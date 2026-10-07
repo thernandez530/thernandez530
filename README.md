@@ -2,6 +2,10 @@
   <h3><code>tomas@github ~ $ ./profile.sh</code></h3>
   <img src="./assets/system-profile.svg" width="860" alt="Terminal de Tomás Hernández: retrato ASCII animado e información profesional" />
   <br><br>
+  <img src="./assets/streaks.svg" width="860" alt="Contribuciones y rachas de actividad reales" />
+  <br><br>
+  <img src="./assets/github-overview.svg" width="860" alt="Estrellas, commits, pull requests, issues y lenguajes más usados en repositorios públicos" />
+  <br><br>
   <img src="./assets/stats.svg" width="860" alt="Estadísticas reales de GitHub y contribuciones mensuales" />
   <br><br>
   <img src="./assets/contributions.svg" width="860" alt="Calendario animado de contribuciones de thernandez530" />

@@ -26,15 +26,36 @@ def fetch():
     import os
     token=os.environ.get('GH_TOKEN')
     if not token: raise RuntimeError('GH_TOKEN is required for --fetch (use the built-in GitHub Actions token).')
-    query='query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}'
+    query='query($login:String!){user(login:$login){contributionsCollection{totalCommitContributions totalPullRequestContributions totalIssueContributions totalRepositoriesWithContributedCommits contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}'
     req=urllib.request.Request('https://api.github.com/graphql',data=json.dumps({'query':query,'variables':{'login':USER}}).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json','User-Agent':'profile-art'})
     with urllib.request.urlopen(req,timeout=30) as response: result=json.load(response)
     if result.get('errors'): raise RuntimeError(str(result['errors']))
-    calendar=result['data']['user']['contributionsCollection']['contributionCalendar']
+    collection=result['data']['user']['contributionsCollection']
+    calendar=collection['contributionCalendar']
     if not calendar['weeks']: raise ValueError('Empty calendar; keeping previous assets.')
     (ROOT/'data').mkdir(exist_ok=True)
     calendar['updated']=dt.datetime.now(dt.timezone.utc).isoformat()
     (ROOT/'data/contributions.json').write_text(json.dumps(calendar,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    # Public owned repositories only, with pagination. Never publish private repo metadata.
+    repos=[]; cursor=None
+    repo_query='query($login:String!,$cursor:String){user(login:$login){repositories(first:100,after:$cursor,ownerAffiliations:OWNER,privacy:PUBLIC,isFork:false){pageInfo{hasNextPage endCursor} nodes{name stargazerCount languages(first:100){edges{size node{name color}}}}}}}'
+    while True:
+        request=urllib.request.Request('https://api.github.com/graphql',data=json.dumps({'query':repo_query,'variables':{'login':USER,'cursor':cursor}}).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json','User-Agent':'profile-art'})
+        with urllib.request.urlopen(request,timeout=30) as response: page=json.load(response)
+        if page.get('errors'): raise RuntimeError(str(page['errors']))
+        connection=page['data']['user']['repositories']; repos.extend(connection['nodes'])
+        if not connection['pageInfo']['hasNextPage']: break
+        cursor=connection['pageInfo']['endCursor']
+    languages={}
+    for repo in repos:
+        # Profile artwork tooling is not representative of application code.
+        if repo['name']==USER: continue
+        for edge in repo['languages']['edges']:
+            language=edge['node']; entry=languages.setdefault(language['name'],{'bytes':0,'color':language['color'] or '#a78bfa'})
+            entry['bytes']+=edge['size']
+    metrics={'updated':calendar['updated'],'stars':sum(r['stargazerCount'] for r in repos),'repositories':len(repos),'commits':collection['totalCommitContributions'],'prs':collection['totalPullRequestContributions'],'issues':collection['totalIssueContributions'],'contributed':collection['totalRepositoriesWithContributedCommits'],'languages':languages}
+    (ROOT/'data/profile-metrics.json').write_text(json.dumps(metrics,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
 
 def heatmap():
     path=ROOT/'data/contributions.json'

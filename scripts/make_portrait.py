@@ -166,7 +166,47 @@ def project_cards():
         body+=txt(22,195,'↗ ABRIR PROYECTO',11,'#67e8f9')
         (ROOT/f'assets/project-{slug}.svg').write_text(terminal(body,216,name+' — '+line1,width=420),encoding='utf-8')
 
+
+def extra_sections():
+    calendar=json.loads((ROOT/'data/contributions.json').read_text())
+    days=sorted([d for w in calendar['weeks'] for d in w['contributionDays']],key=lambda d:d['date'])
+    longest=run=0
+    for d in days:
+        run=run+1 if d['contributionCount'] else 0; longest=max(longest,run)
+    end=len(days)-1
+    if days and not days[end]['contributionCount']: end-=1
+    current=0
+    while end>=0 and days[end]['contributionCount']:
+        current+=1;end-=1
+    body=txt(26,30,'STREAK.MONITOR',12,'#67e8f9')
+    for x,value,label,color in [(154,calendar['totalContributions'],'Contribuciones / 12 meses','#a78bfa'),(430,current,'Racha actual / días','#67e8f9'),(706,longest,'Mejor racha / días','#a78bfa')]:
+        body+=f'<circle cx="{x}" cy="109" r="51" fill="none" stroke="#243352" stroke-width="7"/><circle cx="{x}" cy="109" r="51" fill="none" stroke="{color}" stroke-width="7" stroke-dasharray="280 41" transform="rotate(-90 {x} 109)"/>'
+        body+=f'<text x="{x}" y="119" text-anchor="middle" fill="#f1f5f9" font-size="32">{value}</text><text x="{x}" y="187" text-anchor="middle" fill="#94a3b8" font-size="12">{label}</text>'
+    (ROOT/'assets/streaks.svg').write_text(terminal(body,213,'Contribuciones y rachas reales de GitHub'),encoding='utf-8')
+    path=ROOT/'data/profile-metrics.json'
+    metrics=json.loads(path.read_text()) if path.exists() else {}
+    body=txt(26,30,'GITHUB.STATS',12,'#67e8f9')+txt(449,30,'MOST USED LANGUAGES',12,'#67e8f9')
+    body+='<line x1="421" y1="52" x2="421" y2="282" stroke="#29445f"/>'
+    rows=[('Estrellas / repos públicos','stars'),('Commits / últimos 12 meses','commits'),('Pull requests / 12 meses','prs'),('Issues / últimos 12 meses','issues'),('Repos con commits / 12 meses','contributed'),('Repositorios públicos propios','repositories')]
+    for i,(label,key) in enumerate(rows):
+        y=72+i*35
+        body+=txt(26,y,label,12,'#cbd5e1')+txt(367,y,metrics.get(key,'—'),16,'#d8b4fe')
+    languages=sorted(metrics.get('languages',{}).items(),key=lambda pair:pair[1]['bytes'],reverse=True)
+    total=sum(d['bytes'] for _,d in languages)
+    if total:
+        top=languages[:5]
+        if len(languages)>5: top.append(('Otros',{'bytes':sum(v['bytes'] for _,v in languages[5:]),'color':'#94a3b8'}))
+        for i,(name,data) in enumerate(top):
+            y=70+i*34;percent=data['bytes']/total*100;color=html.escape(data['color'],quote=True)
+            body+=txt(449,y,name,12,'#cbd5e1')+txt(760,y,f'{percent:.1f}%',11,'#d8b4fe')
+            body+=f'<rect x="449" y="{y+8}" width="355" height="7" rx="3" fill="#243352"/><rect class="boot" style="animation-delay:{i*.12}s" x="449" y="{y+8}" width="{355*percent/100:.2f}" height="7" rx="3" fill="{color}"/>'
+    else:
+        body+=txt(449,90,'Sincronizando datos de GitHub…',12,'#94a3b8')
+    body+=txt(449,293,'Bytes de código público · excluye este perfil',10,'#94a3b8')
+    body+=txt(26,318,'GitHub API / '+metrics.get('updated',calendar['updated'])[:10]+' UTC',10,'#94a3b8')
+    (ROOT/'assets/github-overview.svg').write_text(terminal(body,337,'Estadísticas de GitHub y distribución de lenguajes en repositorios públicos'),encoding='utf-8')
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--source-file','--avatar-file',dest='source_file');args=parser.parse_args()
     source=args.source_file or ROOT/'assets/portrait-source.jpg'
-    portrait(source);stats();system_profile();project_cards()
+    portrait(source);stats();system_profile();project_cards();extra_sections()
