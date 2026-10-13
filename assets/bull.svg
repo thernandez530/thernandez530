@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="880" viewBox="0 0 740 880" role="img">
+<title>Toro holográfico en cian y violeta</title>
+<defs>
+<linearGradient id="bull-color" x2="0.8" y2="1"><stop stop-color="#67e8f9"/><stop offset="1" stop-color="#c084fc"/></linearGradient>
+<pattern id="bull-scan" width="8" height="12" patternUnits="userSpaceOnUse"><path d="M0 1H8" stroke="#67e8f9" stroke-opacity=".18"/></pattern>
+<clipPath id="bull-mask"><path d="M235 290L282 238L370 220L458 238L505 290L478 430L440 510L428 613L370 650L312 613L300 510L262 430Z"/></clipPath>
+</defs>
+<style>
+.bull-light{animation:bull-light 4s ease-in-out infinite}
+.bull-sweep{animation:bull-sweep 6s linear infinite}
+@keyframes bull-light{0%,100%{opacity:.65}50%{opacity:1}}
+@keyframes bull-sweep{from{transform:translateY(-400px)}to{transform:translateY(400px)}}
+@media(prefers-reduced-motion:reduce){.bull-light,.bull-sweep{animation:none}.bull-sweep{display:none}}
+</style>
+<g fill="none" stroke="#284d70" stroke-width="2">
+<path d="M42 180V104H118M622 104H698V180M42 660V736H118M622 736H698V660"/>
+<path d="M60 420H680M370 116V716" stroke-dasharray="4 14"/>
+<ellipse cx="370" cy="730" rx="224" ry="44"/><ellipse cx="370" cy="730" rx="174" ry="26"/>
+<path d="M146 730H594M370 686V774"/>
+</g>
+<g stroke="url(#bull-color)" stroke-width="5" stroke-linejoin="round">
+<!-- Swept horns and ears, broad forehead, tapered muzzle. -->
+<path d="M282 260C178 258 107 194 102 116C64 237 127 333 249 340L282 290Z" fill="#12304b"/>
+<path d="M458 260C562 258 633 194 638 116C676 237 613 333 491 340L458 290Z" fill="#12304b"/>
+<path d="M250 328L155 310L201 380L268 396M490 328L585 310L539 380L472 396" fill="#172445"/>
+<path d="M235 290L282 238L370 220L458 238L505 290L478 430L440 510L428 613L370 650L312 613L300 510L262 430Z" fill="#101f3d"/>
+<path d="M282 238L306 350L370 394L434 350L458 238M235 290L306 350L262 430L329 462L300 510M505 290L434 350L478 430L411 462L440 510M370 220V394L329 462L312 563M370 394L411 462L428 563M306 350H434M329 462H411M312 563L370 542L428 563L428 613L370 650L312 613Z" fill="none" stroke-width="3"/>
+<path d="M312 613L370 600L428 613M370 542V600" fill="none" stroke-width="3"/>
+</g>
+<g clip-path="url(#bull-mask)">
+<rect x="230" y="220" width="280" height="440" fill="url(#bull-scan)"/>
+<path class="bull-sweep" d="M230 430H510" stroke="#a5f3fc" stroke-width="7" opacity=".45"/>
+</g>
+<g class="bull-light" fill="#a5f3fc">
+<path d="M278 397L326 414L302 426L280 417ZM462 397L414 414L438 426L460 417Z"/>
+<path d="M329 574L347 580L338 590L324 585ZM411 574L393 580L402 590L416 585Z"/>
+<circle cx="370" cy="220" r="5"/><circle cx="306" cy="350" r="5"/><circle cx="434" cy="350" r="5"/>
+</g>
+<g stroke="#67e8f9" opacity=".3" stroke-dasharray="3 10"><path d="M312 650L246 713M428 650L494 713M370 666V730"/></g>
+</svg>

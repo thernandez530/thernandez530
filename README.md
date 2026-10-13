@@ -1,6 +1,6 @@
 <div align="center">
   <h3><code>tomas@github ~ $ ./profile.sh</code></h3>
-  <img src="./assets/system-profile.svg" width="860" alt="Terminal de Tomás Hernández: retrato ASCII animado e información profesional" />
+  <img src="./assets/system-profile.svg" width="860" alt="Terminal de Tomás Hernández: toro holográfico animado e información profesional" />
   <br><br>
   <img src="./assets/streaks.svg" width="860" alt="Contribuciones y rachas de actividad reales" />
   <br><br>

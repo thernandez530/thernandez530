@@ -132,7 +132,7 @@ def terminal(body,height,label,width=860):
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img"><title>{html.escape(label)}</title><defs><linearGradient id="surface" x2="1" y2="1"><stop stop-color="#080d23"/><stop offset="1" stop-color="#141d42"/></linearGradient></defs><style>text{{font-family:Consolas,"Liberation Mono",monospace}}text{{animation:readout 16s ease infinite}}.boot{{animation:boot 16s ease infinite}}.grow-y{{transform-box:fill-box;transform-origin:center bottom;animation:grow-y 16s ease infinite}}.grow-x{{transform-box:fill-box;transform-origin:left center;animation:grow-x 16s ease infinite}}.ring{{animation:ring 16s ease infinite}}.pulse{{animation:pulse 4s ease-in-out infinite}}@keyframes readout{{0%{{opacity:.25}}8%,100%{{opacity:1}}}}@keyframes boot{{0%{{opacity:.2;transform:translateY(4px)}}10%,100%{{opacity:1;transform:translateY(0)}}}}@keyframes grow-y{{0%{{transform:scaleY(.02)}}14%,100%{{transform:scaleY(1)}}}}@keyframes grow-x{{0%{{transform:scaleX(.01)}}14%,100%{{transform:scaleX(1)}}}}@keyframes ring{{0%{{stroke-dashoffset:321}}15%,100%{{stroke-dashoffset:0}}}}@keyframes pulse{{0%,100%{{opacity:.5}}50%{{opacity:1}}}}@media(prefers-reduced-motion:reduce){{text,.boot,.grow-y,.grow-x,.ring,.pulse{{animation:none}}}}</style><rect x="1" y="1" width="{width-2}" height="{height-2}" rx="12" fill="url(#surface)" stroke="#67e8f9" stroke-opacity=".65"/>{body}</svg>'''
 
 def system_profile():
-    raw=(ROOT/'assets/portrait.svg').read_text()
+    raw=(ROOT/'assets/bull.svg').read_text(encoding='utf-8')
     # Nested self-contained SVG: no external image requests, JS or fonts.
     raw=raw.replace('width="740" height="880"','x="25" y="72" width="300" height="357"',1)
     raw=raw.replace('#0d1117','#0a1029').replace('#30363d','#284d70')
@@ -153,7 +153,7 @@ def system_profile():
         body+=f'<g class="boot" style="animation-delay:{.2+i*.1:.2f}s">'+txt(373,y,key,11,'#67e8f9')+txt(535,y,value,12,'#dbeafe')+'</g>'
     body+='<line x1="1" y1="447" x2="859" y2="447" stroke="#29445f"/>'
     body+=txt(26,469,'$ construir / integrar / automatizar',11,'#a5b4fc')+txt(642,469,'PROFILE.READY [✓]',11,'#67e8f9')
-    (ROOT/'assets/system-profile.svg').write_text(terminal(body,486,'Perfil terminal de Tomás Hernández: retrato ASCII, formación, stack y contactos'),encoding='utf-8')
+    (ROOT/'assets/system-profile.svg').write_text(terminal(body,486,'Perfil terminal de Tomás Hernández: toro holográfico, formación, stack y contactos'),encoding='utf-8')
 
 def project_cards():
     projects=[('portfolio','01','Portafolio personal','Presentación de proyectos y experiencia.','Diseño web y desarrollo de aplicaciones.',['Next.js','TypeScript','Tailwind CSS']),('psiconectados','02','Psiconectados','Agenda, consentimientos digitales y pagos.','Plataforma de atención psicológica.',['Full Stack','Supabase','Mercado Pago'])]
